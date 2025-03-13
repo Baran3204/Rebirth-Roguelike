@@ -6,13 +6,14 @@ public class PlayerAnimationsController : MonoBehaviour
     private Animator _playerAnimator;
     private Transform _playerTransform;
     private SpriteRenderer _playerSprite;
-    private bool _isLeft;
+    private PlayerController _playerController;
 
     private void Awake() 
     {
         _playerAnimator = GetComponent<Animator>();  
         _playerTransform = GetComponent<Transform>();  
         _playerSprite = GetComponent<SpriteRenderer>();  
+        _playerController = GetComponent<PlayerController>();  
     }
     
     private void Update() 
@@ -37,15 +38,9 @@ public class PlayerAnimationsController : MonoBehaviour
 
     private void SetPlayerFlip()
     {
-        var playerX = _playerTransform.position.x;
-        if(playerX < playerX + _playerTransform.position.x)
-        {
-            _playerSprite.flipX = false;
-        }
-        else if(playerX > playerX +_playerTransform.position.x)
-        {
-            _playerSprite.flipX = true;
-        }
-        
+        var canFlip = _playerController.GetCanFlip();
+
+        if(canFlip) { _playerSprite.flipX = false; }
+        else if(!canFlip) { _playerSprite.flipX = true; }
     }
 }

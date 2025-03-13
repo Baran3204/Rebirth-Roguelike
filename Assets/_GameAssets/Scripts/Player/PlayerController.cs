@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -17,16 +18,21 @@ public class PlayerController : MonoBehaviour
     
     private Vector2 _movementDirection;
     private Rigidbody2D _playerRigidbody;
-    private float _horizontal, _vertical;
+    private BoxCollider2D _playerCollider;
+    private float _horizontal, _vertical, coolDown;
+    private bool _canFlip;
     private void Awake() 
     {
         _playerRigidbody = GetComponent<Rigidbody2D>();
+        _playerCollider = GetComponent<BoxCollider2D>();
+         coolDown = _shiftCooldown;
     }
     private void Update() 
     {
+        PlayerCanFlip();
         Setİnputs(); 
         SetPlayerState();
-        StartCoroutine(nameof(SetShifting));
+        SetShifting();
     }
 
     private void FixedUpdate() 
@@ -36,6 +42,7 @@ public class PlayerController : MonoBehaviour
     }
     private void SetPlayerMovement()
     {
+        
         _movementDirection = transform.up * _vertical + transform.right * _horizontal;
 
         _playerRigidbody.linearVelocity = _movementDirection * _playerSpeed * Time.deltaTime;
@@ -77,19 +84,51 @@ public class PlayerController : MonoBehaviour
             _ => 5f
         };
     }
-    private IEnumerator SetShifting()
+    private void SetShifting()
     {  
         if(Input.GetKeyDown(_shiftKey) && !_canShift)
         {
-            _canShift = true;
-            _playerRigidbody.AddForce((transform.up * _vertical + transform.right * _horizontal) * _shiftSpeed, ForceMode2D.Force);
-            yield return new WaitForSeconds(_shiftCooldown);
-            _canShift = false;
+            var currentStamina = StaminaManager.Instance.GetStamina();
+           
+            if(currentStamina >= 30f)
+            {
+                StaminaManager.Instance.StaminaDeincrease(30f);
+
+                _canShift = true;
+
+                _playerRigidbody.AddForce((transform.up * _vertical + transform.right * _horizontal) * _shiftSpeed, ForceMode2D.Force);
+
+                coolDown -= Time.deltaTime;
+                if(coolDown <= 0f)
+                {
+                    _canShift = false;
+                    coolDown += _shiftCooldown;                   
+                }
+            }
         }
     } 
+
+   #region Helper Funcionts
+
     private bool GetCanShift()
     {
         return _canShift;
+    }
+    public bool GetCanFlip()
+    {
+        return _canFlip;
+    }
+
+    private void PlayerCanFlip()
+    {   
+        if(_horizontal > 0f)
+        {
+            _canFlip = true;
+        }
+        else if(_horizontal < 0f)
+        {
+            _canFlip = false;
+        }
     }
 
     private void StateWorking()
@@ -99,4 +138,5 @@ public class PlayerController : MonoBehaviour
         else if(currentState == PlayerState.Walk) { Debug.Log("WALK"); }
         else if(currentState == PlayerState.Shift) { Debug.Log("SHİFT"); }
     }
+    #endregion
 }
