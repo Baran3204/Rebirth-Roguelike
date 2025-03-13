@@ -19,20 +19,20 @@ public class PlayerController : MonoBehaviour
     private Vector2 _movementDirection;
     private Rigidbody2D _playerRigidbody;
     private BoxCollider2D _playerCollider;
-    private float _horizontal, _vertical, coolDown;
+    private float _horizontal, _vertical;
     private bool _canFlip;
     private void Awake() 
     {
         _playerRigidbody = GetComponent<Rigidbody2D>();
         _playerCollider = GetComponent<BoxCollider2D>();
-         coolDown = _shiftCooldown;
     }
     private void Update() 
     {
         PlayerCanFlip();
         Setİnputs(); 
         SetPlayerState();
-        SetShifting();
+        StartCoroutine(nameof(SetShifting));
+        SetPlayerTrigger();
     }
 
     private void FixedUpdate() 
@@ -62,7 +62,7 @@ public class PlayerController : MonoBehaviour
         {
             _ when movementDirection == Vector2.zero && !IsShifting => PlayerState.Idle,
             _ when movementDirection != Vector2.zero && !IsShifting => PlayerState.Walk,
-            _ when movementDirection == Vector2.zero && IsShifting => PlayerState.Shift,
+            _ when movementDirection != Vector2.zero && IsShifting => PlayerState.Shift,
             _ => PlayerState.Idle
         };
 
@@ -84,9 +84,24 @@ public class PlayerController : MonoBehaviour
             _ => 5f
         };
     }
-    private void SetShifting()
+
+    private void SetPlayerTrigger()
+    {
+        var currentState = PlayerStateController.Instance.GetPlayerState();
+
+        _playerCollider.isTrigger = currentState switch
+        {
+            _ when currentState == PlayerState.Idle => false,
+            _ when currentState == PlayerState.Walk => false,
+            _ when currentState == PlayerState.Shift => true,
+            _ => false 
+        };
+    }
+    private IEnumerator SetShifting()
     {  
-        if(Input.GetKeyDown(_shiftKey) && !_canShift)
+        var movementDirection = _movementDirection.normalized;
+
+        if(Input.GetKeyDown(_shiftKey) && !_canShift && movementDirection != Vector2.zero)
         {
             var currentStamina = StaminaManager.Instance.GetStamina();
            
@@ -98,12 +113,8 @@ public class PlayerController : MonoBehaviour
 
                 _playerRigidbody.AddForce((transform.up * _vertical + transform.right * _horizontal) * _shiftSpeed, ForceMode2D.Force);
 
-                coolDown -= Time.deltaTime;
-                if(coolDown <= 0f)
-                {
-                    _canShift = false;
-                    coolDown += _shiftCooldown;                   
-                }
+                yield return new WaitForSeconds(_shiftCooldown);
+                _canShift = false;
             }
         }
     } 
