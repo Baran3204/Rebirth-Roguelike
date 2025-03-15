@@ -34,7 +34,7 @@ public class GunManager : MonoBehaviour
 
             rb.linearVelocity = _gunTransform.transform.right * _bulletSpeed;
 
-            Destroy(bullet, 5f);
+            Destroy(bullet, 2f);
         }
     }
     private void SetInputs()

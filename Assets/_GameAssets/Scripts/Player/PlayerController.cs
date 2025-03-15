@@ -1,18 +1,17 @@
 using System;
 using System.Collections;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    
+
     [Header("Settings")]
     [SerializeField] private float _playerSpeed;
 
     [Header("Shift Settings")]
-    [SerializeField] private float _shiftDrag;
     [SerializeField] private float _shiftSpeed;
-    [SerializeField] private float _shiftCooldown;
     [SerializeField] private bool _canShift;
     [SerializeField] private KeyCode _shiftKey;
     
@@ -31,7 +30,8 @@ public class PlayerController : MonoBehaviour
         PlayerCanFlip();
         Setİnputs(); 
         SetPlayerState();
-        StartCoroutine(nameof(SetShifting));
+        SetShifting();
+        SetPlayerSpeed();
         SetPlayerTrigger();
     }
 
@@ -72,19 +72,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void SetPlayerDrag()
-    {
-        PlayerState currentState = PlayerStateController.Instance.GetPlayerState();
-
-        _playerRigidbody.linearDamping = currentState switch
-        {
-            _ when currentState == PlayerState.Idle => 5f,
-            _ when currentState == PlayerState.Walk => 5f,
-            _ when currentState == PlayerState.Shift => 0f,
-            _ => 5f
-        };
-    }
-
     private void SetPlayerTrigger()
     {
         var currentState = PlayerStateController.Instance.GetPlayerState();
@@ -97,31 +84,58 @@ public class PlayerController : MonoBehaviour
             _ => false 
         };
     }
-    private IEnumerator SetShifting()
+    private void SetPlayerSpeed()
+    {
+        var currentState = PlayerStateController.Instance.GetPlayerState();
+        var currentStamina = PlayerStateController.Instance.GetPlayerState();
+
+        if(currentStamina > 0f)
+        {
+            var newSpeed = currentState switch
+            {
+                _ when currentState == PlayerState.Shift => _shiftSpeed,
+                _ => 200f
+            };
+      
+            _playerSpeed = newSpeed;
+        }
+        else
+        {
+            _playerSpeed = 200f;
+        }
+       
+    }
+
+    private void SetShifting()
     {  
         var movementDirection = _movementDirection.normalized;
 
-        if(Input.GetKeyDown(_shiftKey) && !_canShift && movementDirection != Vector2.zero)
-        {
+        
+        if(Input.GetKey(_shiftKey))
+        {      
             var currentStamina = StaminaManager.Instance.GetStamina();
-           
-            if(currentStamina >= 30f)
+        
+            var currentCanShift = GetCanShift();
+
+            if(!currentCanShift && currentStamina >= 3f)
             {
-                StaminaManager.Instance.StaminaDeincrease(30f);
-
                 _canShift = true;
-
-                _playerRigidbody.AddForce((transform.up * _vertical + transform.right * _horizontal) * _shiftSpeed, ForceMode2D.Force);
-
-                yield return new WaitForSeconds(_shiftCooldown);
-                _canShift = false;
             }
+            else if(currentCanShift && currentStamina <= 0f)
+            {
+                _canShift = false;
+            }    
         }
+        if(Input.GetKeyUp(_shiftKey) && _canShift)
+        {
+            _canShift = false;
+        }
+        
     } 
 
    #region Helper Funcionts
 
-    private bool GetCanShift()
+    public bool GetCanShift()
     {
         return _canShift;
     }

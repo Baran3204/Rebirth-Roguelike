@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using TMPro;
 using UnityEngine;
 
@@ -11,49 +12,78 @@ public class StaminaManager : MonoBehaviour
 
    [Header("Settings")]
    [SerializeField] private float _maxStamina = 100f;
-   [SerializeField] private float _staminaCooldown;
-   [SerializeField] private float _staminaİncrease;
-   private float currentStamina, currentCooldown;
+   [SerializeField] private float _increaseCooldown;
+   [SerializeField] private float _deincreaseCooldown;
+   [SerializeField] private float _idleStaminaİncrease;
+   [SerializeField] private float _movementStaminaİncrease;
+   private float currentStamina, currentİncreaseCooldown, currentDeincreaseCooldown;
 
    private void Awake() 
    {
         Instance = this;
         currentStamina = _maxStamina;  
-        currentCooldown = _staminaCooldown;
+        currentİncreaseCooldown = _increaseCooldown;
+        currentDeincreaseCooldown = _deincreaseCooldown;
    }
 
-    private void Update() 
+   private void Update() 
     {
         Staminaİncrease();
-        if(currentStamina > 0f)
-        {
-             _staminaText.text = "Şu anki Stamina \n " + currentStamina.ToString();
-        }
-        else
-        {
-            _staminaText.text = "Stamina Kalmadı!";
-        }
-          
+        SetStaminaDeinscrease(); 
+        _staminaText.text = "Şu anki Stamina \n " + currentStamina.ToString();       
     }
+
+
+    private void SetStaminaDeinscrease()
+    {
+        var currentState = PlayerStateController.Instance.GetPlayerState();
+
+        float deinscrease = currentState switch
+        {
+            _ when currentState == PlayerState.Shift => 3f,
+            _ => 0f
+        };
+        currentDeincreaseCooldown -= Time.deltaTime;
+
+        if(currentDeincreaseCooldown <= 0f)
+        {
+            if(currentStamina > 0f)
+            {
+                currentStamina -= deinscrease;
+            }
+             if(currentStamina <= 0f)
+             {
+                currentStamina = 0f;
+             }
+        currentDeincreaseCooldown += _deincreaseCooldown;
+        }
+     
+    }
+    
     private void Staminaİncrease()
     {
-        currentCooldown -= Time.deltaTime;
-        if(currentCooldown <= 0f)
+        var currentState = PlayerStateController.Instance.GetPlayerState();
+        var increase = currentState switch
         {
-          currentStamina += _staminaİncrease;
+            _ when currentState == PlayerState.Idle => _idleStaminaİncrease,
+            _ when currentState == PlayerState.Walk => _movementStaminaİncrease,
+            _ when currentState == PlayerState.Shift => 0f,
+            _ => 0f
+        };
+        currentİncreaseCooldown -= Time.deltaTime;
+        if(currentİncreaseCooldown <= 0f)
+        {
+          currentStamina += increase;
             
           if(currentStamina >= _maxStamina)
           {
               currentStamina = _maxStamina;
           }
            
-            currentCooldown += _staminaCooldown;
+            currentİncreaseCooldown += _increaseCooldown;
         }
     }
-    public void StaminaDeincrease(float staminaAmount)
-    {
-        currentStamina -= staminaAmount;
-    }
+   
     public float GetStamina()
     {
         return currentStamina;

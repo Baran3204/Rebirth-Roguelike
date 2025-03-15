@@ -8462,8 +8462,10 @@ MonoBehaviour:
   _playerController: {fileID: 1998674416}
   _staminaText: {fileID: 609210027}
   _maxStamina: 100
-  _staminaCooldown: 1
-  "_stamina\u0130ncrease": 10
+  _increaseCooldown: 1
+  _deincreaseCooldown: 0.3
+  "_idleStamina\u0130ncrease": 5
+  "_movementStamina\u0130ncrease": 3
 --- !u!4 &1731194999
 Transform:
   m_ObjectHideFlags: 0
@@ -8546,9 +8548,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerSpeed: 200
-  _shiftDrag: 1
-  _shiftSpeed: 5000
-  _shiftCooldown: 1
+  _shiftSpeed: 300
   _canShift: 0
   _shiftKey: 304
 --- !u!61 &1998674417
