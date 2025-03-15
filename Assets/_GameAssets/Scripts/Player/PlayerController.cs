@@ -1,11 +1,14 @@
 using System;
 using System.Collections;
-using System.Runtime.InteropServices.WindowsRuntime;
+using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
+using DG.Tweening;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("References")]
+    [SerializeField] private CinemachineCamera _camera;
 
     [Header("Settings")]
     [SerializeField] private float _playerSpeed;
@@ -107,10 +110,7 @@ public class PlayerController : MonoBehaviour
     }
 
     private void SetShifting()
-    {  
-        var movementDirection = _movementDirection.normalized;
-
-        
+    {   
         if(Input.GetKey(_shiftKey))
         {      
             var currentStamina = StaminaManager.Instance.GetStamina();
@@ -120,15 +120,18 @@ public class PlayerController : MonoBehaviour
             if(!currentCanShift && currentStamina >= 3f)
             {
                 _canShift = true;
+                _camera.Lens.OrthographicSize = 9f;
             }
             else if(currentCanShift && currentStamina <= 0f)
             {
                 _canShift = false;
+                _camera.Lens.OrthographicSize = 8f;
             }    
         }
         if(Input.GetKeyUp(_shiftKey) && _canShift)
         {
             _canShift = false;
+            _camera.Lens.OrthographicSize = 8f;
         }
         
     } 

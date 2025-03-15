@@ -2,13 +2,14 @@ using System;
 using System.Data;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class StaminaManager : MonoBehaviour
 {
     public static StaminaManager Instance;
    [Header("References")]
    [SerializeField] private PlayerController _playerController;
-   [SerializeField] private TMP_Text _staminaText;
+   [SerializeField] private Slider _staminaSlider;
 
    [Header("Settings")]
    [SerializeField] private float _maxStamina = 100f;
@@ -30,7 +31,7 @@ public class StaminaManager : MonoBehaviour
     {
         Staminaİncrease();
         SetStaminaDeinscrease(); 
-        _staminaText.text = "Şu anki Stamina \n " + currentStamina.ToString();       
+        SetStaminaSlider();   
     }
 
 
@@ -84,9 +85,14 @@ public class StaminaManager : MonoBehaviour
         }
     }
    
-    public float GetStamina()
-    {
-        return currentStamina;
-    }
+   private void SetStaminaSlider()
+   {
+        _staminaSlider.maxValue = _maxStamina;
+        _staminaSlider.value = currentStamina;
+   }
+   public float GetStamina()
+   {
+       return currentStamina;
+   }
     
 }
