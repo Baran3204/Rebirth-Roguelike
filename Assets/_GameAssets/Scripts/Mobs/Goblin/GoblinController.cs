@@ -3,58 +3,59 @@ using UnityEngine;
 public class GoblinController : MonoBehaviour, IDamagables
 {
     [Header("References")]
-    [SerializeField] private Animator _skeletonAnimator;
+    [SerializeField] private Animator _goblinAnimator;
     private Transform _playerTransform;
     [SerializeField] private SpriteRenderer _sprite;
 
     [Header("Settings")]
-    [SerializeField] private float _skeletonSpeed;
+    [SerializeField] private float _goblinSpeed;
     [SerializeField] private float _damageCoolDown;
-    [SerializeField] private float _maxHealSkeleton;
+    [SerializeField] private float _maxHealGoblin;
     [SerializeField] private float _destroyCooldown;
+    [SerializeField] private float _damageAmount;
 
 
-    private Rigidbody2D _skeletonRB;
-    private SkeletonState _currentState = SkeletonState.Move;
+    private Rigidbody2D _goblinRB;
+    private GoblinState _currentState = GoblinState.Move;
     private Vector3  _movementDirection;
-    private float _currentDamageCooldown, _currentSkeletonHeal;
+    private float _currentDamageCooldown, _currentGoblinHeal;
     private bool _isDead;
     private void Awake() 
     {
-       _skeletonRB = GetComponent<Rigidbody2D>();
-       ChangeState(SkeletonState.Move);
+       _goblinRB = GetComponent<Rigidbody2D>();
+       ChangeState(GoblinState.Move);
        _playerTransform = GameObject.Find("Player").GetComponent<Transform>();
        _currentDamageCooldown = _damageCoolDown;
-       _currentSkeletonHeal = _maxHealSkeleton;
+       _currentGoblinHeal = _maxHealGoblin;
     }
 
     private void Update() 
     {
 
-        Debug.Log("SKELETON CURRENT HEAL: " +  _currentSkeletonHeal.ToString());
-        SetSkeletonFlip();
-        SetSkeletonState();
-        SetSkeletonAnim();
-        SetSkeletonSpeed();
-        SetSkeletonDamage();
+        Debug.Log("SKELETON CURRENT HEAL: " +  _currentGoblinHeal.ToString());
+        SetGoblinFlip();
+        SetGoblinState();
+        SetGoblinAnim();
+        SetGoblinSpeed();
+        SetGoblinDamage();
     }
 
     private void FixedUpdate() 
     {
-        SetSkeletonDirection();  
+        SetGoblinDirection();  
         StateWorking();  
     }
 
 
-    private void SetSkeletonDirection()
+    private void SetGoblinDirection()
     {
 
         _movementDirection =  _playerTransform.position - transform.position;
 
-        _skeletonRB.linearVelocity = _movementDirection * _skeletonSpeed * Time.deltaTime;
+        _goblinRB.linearVelocity = _movementDirection * _goblinSpeed * Time.deltaTime;
     } 
 
-    private void SetSkeletonFlip()
+    private void SetGoblinFlip()
     {
         if(_playerTransform.position.x > transform.position.x)
         {
@@ -65,19 +66,19 @@ public class GoblinController : MonoBehaviour, IDamagables
             _sprite.flipX = true;
         }
     }
-    private void SetSkeletonSpeed()
+    private void SetGoblinSpeed()
     {
-        var currentState = GetSkeletonState();
+        var currentState = GetGoblinState();
 
         var newSpeed = currentState switch
         {
-            _ when currentState == SkeletonState.Move => 15f,
-            _ when currentState == SkeletonState.Attack => 0f,
-            _ when currentState == SkeletonState.Dead => 0f,
-            _ => _skeletonSpeed
+            _ when currentState == GoblinState.Move => 15f,
+            _ when currentState == GoblinState.Attack => 0f,
+            _ when currentState == GoblinState.Dead => 0f,
+            _ => _goblinSpeed
         };
 
-        _skeletonSpeed = newSpeed;
+        _goblinSpeed = newSpeed;
     }
 
     private bool IsAttack()
@@ -89,7 +90,7 @@ public class GoblinController : MonoBehaviour, IDamagables
         else return false;     
     }
 
-    private void SetSkeletonDamage()
+    private void SetGoblinDamage()
     {
         var isAttack = IsAttack();
 
@@ -100,92 +101,92 @@ public class GoblinController : MonoBehaviour, IDamagables
 
             if(_currentDamageCooldown <= 0f)
             {
-                HealManager.Instance.Damage(5f);
+                HealManager.Instance.Damage(_damageAmount);
                 _currentDamageCooldown += _damageCoolDown;
             }
             
         }
     }
-    private void SetSkeletonState()
+    private void SetGoblinState()
     {
         var movementDirection = _movementDirection.normalized;
-        var currentState = GetSkeletonState();
+        var currentState = GetGoblinState();
         var isAttack = IsAttack();
         var IsDead = GetIsDead();
 
         var newState = currentState switch
         {
-            _ when movementDirection != Vector3.zero && !isAttack && IsDead => SkeletonState.Dead,
-            _ when movementDirection != Vector3.zero && !isAttack && !IsDead => SkeletonState.Move,
-            _ when movementDirection != Vector3.zero && isAttack && !IsDead => SkeletonState.Attack,
-            _ => SkeletonState.Move
+            _ when movementDirection != Vector3.zero && !isAttack && IsDead => GoblinState.Dead,
+            _ when movementDirection != Vector3.zero && !isAttack && !IsDead => GoblinState.Move,
+            _ when movementDirection != Vector3.zero && isAttack && !IsDead => GoblinState.Attack,
+            _ => GoblinState.Move
         };
 
         if(newState == currentState) { return; }
         else ChangeState(newState);
     }
-    public enum SkeletonState
+    public enum GoblinState
     {
         Move, Attack, Dead
     }
 
-    private void ChangeState(SkeletonState newState)
+    private void ChangeState(GoblinState newState)
     {
         if(_currentState == newState) { return; }
 
         _currentState = newState;
     }
 
-    public SkeletonState GetSkeletonState()
+    public GoblinState GetGoblinState()
     {
         return _currentState;
     }
-    private void SetSkeletonAnim()
+    private void SetGoblinAnim()
     {
-        var currentState = GetSkeletonState();
+        var currentState = GetGoblinState();
 
         switch(currentState)
         {
-            case SkeletonState.Move:
-            _skeletonAnimator.SetBool("IsMove", true);
-            _skeletonAnimator.SetBool("IsDead", false);
-            _skeletonAnimator.SetBool("IsAttack", false);
+            case GoblinState.Move:
+            _goblinAnimator.SetBool("IsMove", true);
+            _goblinAnimator.SetBool("IsDead", false);
+            _goblinAnimator.SetBool("IsAttack", false);
             break;
-            case SkeletonState.Dead:
-            _skeletonAnimator.SetBool("IsMove", false);
-            _skeletonAnimator.SetBool("IsDead", true);
-            _skeletonAnimator.SetBool("IsAttack", false);
+            case GoblinState.Dead:
+            _goblinAnimator.SetBool("IsMove", false);
+            _goblinAnimator.SetBool("IsDead", true);
+            _goblinAnimator.SetBool("IsAttack", false);
             break;
-            case SkeletonState.Attack:
-            _skeletonAnimator.SetBool("IsMove", false);
-            _skeletonAnimator.SetBool("IsDead", false);
-            _skeletonAnimator.SetBool("IsAttack", true);
+            case GoblinState.Attack:
+            _goblinAnimator.SetBool("IsMove", false);
+            _goblinAnimator.SetBool("IsDead", false);
+            _goblinAnimator.SetBool("IsAttack", true);
             break;
         }
     }
     private void StateWorking()
     {
-        var currentState = GetSkeletonState();
+        var currentState = GetGoblinState();
 
         switch (currentState)
         {
-            case SkeletonState.Move:
-            Debug.Log("SKELETON MOVE");
+            case GoblinState.Move:
+            Debug.Log("GOBLİN MOVE");
             break;
-            case SkeletonState.Attack:
-            Debug.Log("SKELETON ATTACK");
+            case GoblinState.Attack:
+            Debug.Log("GOBLİN ATTACK");
             break;
-            case SkeletonState.Dead:
-            Debug.Log("SKELETON DEAD");
+            case GoblinState.Dead:
+            Debug.Log("GOBLİN DEAD");
             break;
         }
     }
 
     public void Damage(float damageAmount)
     {
-        _currentSkeletonHeal -= damageAmount;
+        _currentGoblinHeal -= damageAmount;
 
-        if(_currentSkeletonHeal <= 0f)
+        if(_currentGoblinHeal <= 0f)
         {
             _isDead = true;
         }

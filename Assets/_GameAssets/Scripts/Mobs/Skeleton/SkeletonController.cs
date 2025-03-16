@@ -15,6 +15,7 @@ public class SkeletonController : MonoBehaviour, IDamagables
     [SerializeField] private float _damageCoolDown;
     [SerializeField] private float _maxHealSkeleton;
     [SerializeField] private float _destroyCooldown;
+    [SerializeField] private float _damageAmount;
 
 
     private Rigidbody2D _skeletonRB;
@@ -103,7 +104,7 @@ public class SkeletonController : MonoBehaviour, IDamagables
 
             if(_currentDamageCooldown <= 0f)
             {
-                HealManager.Instance.Damage(5f);
+                HealManager.Instance.Damage(_damageAmount);
                 _currentDamageCooldown += _damageCoolDown;
             }
             

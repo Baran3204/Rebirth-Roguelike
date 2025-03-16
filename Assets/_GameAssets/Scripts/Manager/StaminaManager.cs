@@ -14,9 +14,11 @@ public class StaminaManager : MonoBehaviour
    [Header("Settings")]
    [SerializeField] private float _maxStamina = 100f;
    [SerializeField] private float _increaseCooldown;
-   [SerializeField] private float _deincreaseCooldown;
    [SerializeField] private float _idleStaminaİncrease;
    [SerializeField] private float _movementStaminaİncrease;
+   [SerializeField] private float _deincreaseCooldown;
+   [SerializeField] private float _decreaseAmaount;
+   
    private float currentStamina, currentİncreaseCooldown, currentDeincreaseCooldown;
 
    private void Awake() 
@@ -41,7 +43,7 @@ public class StaminaManager : MonoBehaviour
 
         float deinscrease = currentState switch
         {
-            _ when currentState == PlayerState.Shift => 3f,
+            _ when currentState == PlayerState.Shift => _decreaseAmaount,
             _ => 0f
         };
         currentDeincreaseCooldown -= Time.deltaTime;
