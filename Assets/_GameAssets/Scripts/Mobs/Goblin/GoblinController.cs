@@ -1,10 +1,7 @@
-using System;
-using UnityEditor.ShortcutManagement;
 using UnityEngine;
 
-public class SkeletonController : MonoBehaviour, IDamagables
+public class GoblinController : MonoBehaviour, IDamagables
 {
-
     [Header("References")]
     [SerializeField] private Animator _skeletonAnimator;
     private Transform _playerTransform;

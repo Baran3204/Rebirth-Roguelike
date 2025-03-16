@@ -15,8 +15,7 @@ public class GunManager : MonoBehaviour
 
     [SerializeField] private float _bulletSpeed;
 
-    private float _Direction;
-
+    private float _direction;
 
     private void Update() 
     {
@@ -41,8 +40,8 @@ public class GunManager : MonoBehaviour
     {
         var mouseDir = Input.mousePosition - Camera.main.WorldToScreenPoint(_gunTransform.position);
          
-        _Direction = Mathf.Atan2(mouseDir.y, mouseDir.x) * Mathf.Rad2Deg;
+        _direction = Mathf.Atan2(mouseDir.y, mouseDir.x) * Mathf.Rad2Deg;
 
-        _gunTransform.rotation = Quaternion.AngleAxis(_Direction, Vector3.forward);
+        _gunTransform.rotation = Quaternion.AngleAxis(_direction, Vector3.forward);
     }
 }
