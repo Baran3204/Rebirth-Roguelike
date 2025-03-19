@@ -166,5 +166,15 @@ public class PlayerController : MonoBehaviour
         else if(currentState == PlayerState.Walk) { Debug.Log("WALK"); }
         else if(currentState == PlayerState.Shift) { Debug.Log("SHİFT"); }
     }
+
+    private void OnTriggerEnter2D(Collider2D other) 
+    {
+        if(other.gameObject.CompareTag("Medkit")) 
+        {
+            other.gameObject.TryGetComponent<IHealables>(out IHealables component);
+            component.Heal();
+            Destroy(other.gameObject);
+        }   
+    }
     #endregion
 }

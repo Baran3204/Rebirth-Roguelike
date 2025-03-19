@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 561769799395901144}
   - component: {fileID: 3249881278131450406}
   - component: {fileID: 1175689442687689149}
+  - component: {fileID: 3003185292942178401}
   m_Layer: 0
   m_Name: Mushroom
   m_TagString: Enemy
@@ -48,11 +49,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 643313a3404f8784fae11a8d6cd77276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mushroomAnimator: {fileID: 1175689442687689149}
+  _agentAnimator: {fileID: 1175689442687689149}
   _sprite: {fileID: 4635033624461707328}
-  _mushroomSpeed: 10
+  _agentSpeed: 10
   _damageCoolDown: 0.7
-  _maxHealMushroom: 100
+  _maxHealAgent: 100
   _destroyCooldown: 0.9
   _damageAmount: 6
 --- !u!212 &4635033624461707328
@@ -98,7 +99,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 4723107735738678597, guid: f8b30c2afe165d645b54d500a9c30862, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -205,3 +206,25 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!195 &3003185292942178401
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4324336688805690988}
+  m_Enabled: 1
+  m_AgentTypeID: -1372625422
+  m_Radius: 0.3
+  m_Speed: 0
+  m_Acceleration: 2
+  avoidancePriority: 50
+  m_AngularSpeed: 2000
+  m_StoppingDistance: 2
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 1.5
+  m_BaseOffset: 0.2
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4

@@ -1,25 +1,26 @@
+using System;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class GoblinController : MonoBehaviour, IDamagables
 {
+    
     [Header("References")]
-    [SerializeField] private Animator _goblinAnimator;
+    [SerializeField] private Animator _agentAnimator;
     private Transform _playerTransform;
     [SerializeField] private SpriteRenderer _sprite;
 
     [Header("Settings")]
-    [SerializeField] private float _goblinSpeed;
+    [SerializeField] private float _agentSpeed;
     [SerializeField] private float _damageCoolDown;
-    [SerializeField] private float _maxHealGoblin;
+    [SerializeField] private float _maxHealAgent;
     [SerializeField] private float _destroyCooldown;
     [SerializeField] private float _damageAmount;
 
-
-    private Rigidbody2D _goblinRB;
     private NavMeshAgent _agent;
-    private GoblinState _currentState = GoblinState.Move;
-    private float _currentDamageCooldown, _currentGoblinHeal;
+    private AgentState _currentState = AgentState.Move;
+    private float _currentDamageCooldown, _currentAgentHeal;
     private bool _isDead;
     private void Awake() 
     {
@@ -27,37 +28,35 @@ public class GoblinController : MonoBehaviour, IDamagables
         _agent.updateRotation = false;
         _agent.updateUpAxis = false;
 
-       _goblinRB = GetComponent<Rigidbody2D>();
-       ChangeState(GoblinState.Move);
+       ChangeState(AgentState.Move);
        _playerTransform = GameObject.Find("Player").GetComponent<Transform>();
        _currentDamageCooldown = _damageCoolDown;
-       _currentGoblinHeal = _maxHealGoblin;
+       _currentAgentHeal = _maxHealAgent;
     }
 
     private void Update() 
     {
-
-        Debug.Log("SKELETON CURRENT HEAL: " +  _currentGoblinHeal.ToString());
-        SetGoblinFlip();
-        SetGoblinState();
-        SetGoblinAnim();
-        SetGoblinSpeed();
-        SetGoblinDamage();
+        SetAgentStopping();
+        SetAgentFlip();
+        SetAgentState();
+        SetAgentAnim();
+        SetAgentSpeed();
+        SetAgentDamage();
     }
 
     private void FixedUpdate() 
     {
-        SetGoblinDirection();  
+        SetAgentDirection();  
         StateWorking();  
     }
 
 
-    private void SetGoblinDirection()
+    private void SetAgentDirection()
     {
             _agent.SetDestination(_playerTransform.position);
     } 
 
-    private void SetGoblinFlip()
+    private void SetAgentFlip()
     {
         if(_playerTransform.position.x > transform.position.x)
         {
@@ -68,16 +67,16 @@ public class GoblinController : MonoBehaviour, IDamagables
             _sprite.flipX = true;
         }
     }
-    private void SetGoblinSpeed()
+    private void SetAgentSpeed()
     {
-        var currentState = GetGoblinState();
+        var currentState = GetAgentState();
 
         var newSpeed = currentState switch
         {
-            _ when currentState == GoblinState.Move => _goblinSpeed,
-            _ when currentState == GoblinState.Attack => 0f,
-            _ when currentState == GoblinState.Dead => 0f,
-            _ => _goblinSpeed
+            _ when currentState == AgentState.Move => _agentSpeed,
+            _ when currentState == AgentState.Attack => 0f,
+            _ when currentState == AgentState.Dead => 0f,
+            _ => _agentSpeed
         };
 
         _agent.speed = newSpeed;
@@ -85,14 +84,32 @@ public class GoblinController : MonoBehaviour, IDamagables
 
     private bool IsAttack()
     {
-        if(Vector3.Distance(transform.position, _playerTransform.position)<= 2f)
+        if(_agent.remainingDistance <= _agent.stoppingDistance)
         {
             return true;
         }
-        else return false;     
+        else 
+        {
+            return false;
+        }     
     }
 
-    private void SetGoblinDamage()
+    private void SetAgentStopping()
+    {
+        var currentState = GetAgentState();
+
+        bool newStopping = currentState switch
+        {
+            _ when currentState == AgentState.Attack => true,
+            _ when currentState == AgentState.Dead => true,
+            _ when currentState == AgentState.Move => false,
+            _ => false
+        };
+
+        _agent.isStopped = newStopping;
+    }
+
+    private void SetAgentDamage()
     {
         var isAttack = IsAttack();
 
@@ -109,94 +126,93 @@ public class GoblinController : MonoBehaviour, IDamagables
             
         }
     }
-    private void SetGoblinState()
+    private void SetAgentState()
     {
-        var currentState = GetGoblinState();
+        var currentState = GetAgentState();
         var isAttack = IsAttack();
         var IsDead = GetIsDead();
 
         var newState = currentState switch
         {
-            _ when  !isAttack && IsDead => GoblinState.Dead,
-            _ when  !isAttack && !IsDead => GoblinState.Move,
-            _ when  isAttack && !IsDead => GoblinState.Attack,
-            _ => GoblinState.Move
+            _ when  !isAttack && IsDead => AgentState.Dead,
+            _ when  !isAttack && !IsDead => AgentState.Move,
+            _ when  isAttack && !IsDead => AgentState.Attack,
+            _ => AgentState.Move
         };
 
         if(newState == currentState) { return; }
         else ChangeState(newState);
     }
-    public enum GoblinState
+    public enum AgentState
     {
         Move, Attack, Dead
     }
 
-    private void ChangeState(GoblinState newState)
+    private void ChangeState(AgentState newState)
     {
         if(_currentState == newState) { return; }
 
         _currentState = newState;
     }
 
-    public GoblinState GetGoblinState()
+    public AgentState GetAgentState()
     {
         return _currentState;
     }
-    private void SetGoblinAnim()
+    private void SetAgentAnim()
     {
-        var currentState = GetGoblinState();
+        var currentState = GetAgentState();
 
         switch(currentState)
         {
-            case GoblinState.Move:
-            _goblinAnimator.SetBool("IsMove", true);
-            _goblinAnimator.SetBool("IsDead", false);
-            _goblinAnimator.SetBool("IsAttack", false);
+            case AgentState.Move:
+            _agentAnimator.SetBool("IsMove", true);
+            _agentAnimator.SetBool("IsDead", false);
+            _agentAnimator.SetBool("IsAttack", false);
             break;
-            case GoblinState.Dead:
-            _goblinAnimator.SetBool("IsMove", false);
-            _goblinAnimator.SetBool("IsDead", true);
-            _goblinAnimator.SetBool("IsAttack", false);
+            case AgentState.Dead:
+            _agentAnimator.SetBool("IsMove", false);
+            _agentAnimator.SetBool("IsDead", true);
+            _agentAnimator.SetBool("IsAttack", false);
             break;
-            case GoblinState.Attack:
-            _goblinAnimator.SetBool("IsMove", false);
-            _goblinAnimator.SetBool("IsDead", false);
-            _goblinAnimator.SetBool("IsAttack", true);
+            case AgentState.Attack:
+            _agentAnimator.SetBool("IsMove", false);
+            _agentAnimator.SetBool("IsDead", false);
+            _agentAnimator.SetBool("IsAttack", true);
             break;
         }
     }
     private void StateWorking()
     {
-        var currentState = GetGoblinState();
+        var currentState = GetAgentState();
 
         switch (currentState)
         {
-            case GoblinState.Move:
-            Debug.Log("GOBLİN MOVE");
+            case AgentState.Move:
+            Debug.Log("Agent MOVE");
             break;
-            case GoblinState.Attack:
-            Debug.Log("GOBLİN ATTACK");
+            case AgentState.Attack:
+            Debug.Log("Agent ATTACK");
             break;
-            case GoblinState.Dead:
-            Debug.Log("GOBLİN DEAD");
+            case AgentState.Dead:
+            Debug.Log("Agent DEAD");
             break;
         }
     }
 
     public void Damage(float damageAmount)
     {
-        _currentGoblinHeal -= damageAmount;
+        _currentAgentHeal -= damageAmount;
 
-        if(_currentGoblinHeal <= 0f)
+        if(_currentAgentHeal <= 0f)
         {
             _isDead = true;
+            if(_isDead)
+            {   
+                Destroy(gameObject, _destroyCooldown);
+            }
         }
-        if(_isDead)
-        {
-            
-            Destroy(gameObject, _destroyCooldown);
-            HealManager.Instance.Heal(5f);
-        }
+       
     }
 
     private bool GetIsDead()

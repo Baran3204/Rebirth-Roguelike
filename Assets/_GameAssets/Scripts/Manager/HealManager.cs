@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,6 +21,18 @@ public class HealManager : MonoBehaviour
         _currentHeal = _maxHeal; 
     }
 
+    public void Healİncrease(float healAmount)
+    {
+        if(_currentHeal != _maxHeal)
+        {
+            _currentHeal += healAmount;
+            if(_currentHeal >= _maxHeal)
+            {
+                _currentHeal = _maxHeal;
+            }
+        }
+    }
+
     private void Update() 
     {
         SetSlider();
@@ -35,6 +48,7 @@ public class HealManager : MonoBehaviour
         if(_currentHeal >= 0f)
         {
             _currentHeal -= damageAmount;
+
             if(_currentHeal <= 0f)
             {
                 _currentHeal = 0f;
@@ -43,10 +57,7 @@ public class HealManager : MonoBehaviour
        
     }
 
-    public void Heal(float healAmaount)
-    {
-        _currentHeal += healAmaount;
-    }
+    
     public float GetCurrentHeal()
     {
         return _currentHeal;

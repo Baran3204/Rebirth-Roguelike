@@ -1,61 +1,60 @@
+using System;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class MushroomController : MonoBehaviour, IDamagables
-{
+{   
     [Header("References")]
-    [SerializeField] private Animator _mushroomAnimator;
+    [SerializeField] private Animator _agentAnimator;
     private Transform _playerTransform;
     [SerializeField] private SpriteRenderer _sprite;
 
     [Header("Settings")]
-    [SerializeField] private float _mushroomSpeed;
+    [SerializeField] private float _agentSpeed;
     [SerializeField] private float _damageCoolDown;
-    [SerializeField] private float _maxHealMushroom;
+    [SerializeField] private float _maxHealAgent;
     [SerializeField] private float _destroyCooldown;
     [SerializeField] private float _damageAmount;
 
-
-    private Rigidbody2D _mushroomRB;
-    private MushroomState _currentState = MushroomState.Move;
-    private Vector3  _movementDirection;
-    private float _currentDamageCooldown, _currentMushroomHeal;
+    private NavMeshAgent _agent;
+    private AgentState _currentState = AgentState.Move;
+    private float _currentDamageCooldown, _currentAgentHeal;
     private bool _isDead;
     private void Awake() 
     {
-       _mushroomRB = GetComponent<Rigidbody2D>();
-       ChangeState(MushroomState.Move);
+        _agent = GetComponent<NavMeshAgent>();
+        _agent.updateRotation = false;
+        _agent.updateUpAxis = false;
+
+       ChangeState(AgentState.Move);
        _playerTransform = GameObject.Find("Player").GetComponent<Transform>();
        _currentDamageCooldown = _damageCoolDown;
-       _currentMushroomHeal = _maxHealMushroom;
+       _currentAgentHeal = _maxHealAgent;
     }
 
     private void Update() 
     {
-
-        Debug.Log("MUSHROOM CURRENT HEAL: " +  _currentMushroomHeal.ToString());
-        SetMushroomFlip();
-        SetMushroomState();
-        SetMushroomAnim();
-        SetMushroomSpeed();
-        SetMushroomDamage();
+        SetAgentStopping();
+        SetAgentFlip();
+        SetAgentState();
+        SetAgentAnim();
+        SetAgentSpeed();
+        SetAgentDamage();
     }
 
     private void FixedUpdate() 
     {
-        SetMushroomDirection();  
+        SetAgentDirection();  
         StateWorking();  
     }
 
 
-    private void SetMushroomDirection()
+    private void SetAgentDirection()
     {
-
-        _movementDirection =  _playerTransform.position - transform.position;
-
-        _mushroomRB.linearVelocity = _movementDirection * _mushroomSpeed * Time.deltaTime;
+            _agent.SetDestination(_playerTransform.position);
     } 
 
-    private void SetMushroomFlip()
+    private void SetAgentFlip()
     {
         if(_playerTransform.position.x > transform.position.x)
         {
@@ -66,31 +65,49 @@ public class MushroomController : MonoBehaviour, IDamagables
             _sprite.flipX = true;
         }
     }
-    private void SetMushroomSpeed()
+    private void SetAgentSpeed()
     {
-        var currentState = GetGoblinState();
+        var currentState = GetAgentState();
 
         var newSpeed = currentState switch
         {
-            _ when currentState == MushroomState.Move => 15f,
-            _ when currentState == MushroomState.Attack => 0f,
-            _ when currentState == MushroomState.Dead => 0f,
-            _ => _mushroomSpeed
+            _ when currentState == AgentState.Move => _agentSpeed,
+            _ when currentState == AgentState.Attack => 0f,
+            _ when currentState == AgentState.Dead => 0f,
+            _ => _agentSpeed
         };
 
-        _mushroomSpeed = newSpeed;
+        _agent.speed = newSpeed;
     }
 
     private bool IsAttack()
     {
-        if(Vector3.Distance(transform.position, _playerTransform.position)<= 2f)
+        if(_agent.remainingDistance <= _agent.stoppingDistance)
         {
             return true;
         }
-        else return false;     
+        else 
+        {
+            return false;
+        }     
     }
 
-    private void SetMushroomDamage()
+    private void SetAgentStopping()
+    {
+        var currentState = GetAgentState();
+
+        bool newStopping = currentState switch
+        {
+            _ when currentState == AgentState.Attack => true,
+            _ when currentState == AgentState.Dead => true,
+            _ when currentState == AgentState.Move => false,
+            _ => false
+        };
+
+        _agent.isStopped = newStopping;
+    }
+
+    private void SetAgentDamage()
     {
         var isAttack = IsAttack();
 
@@ -107,98 +124,96 @@ public class MushroomController : MonoBehaviour, IDamagables
             
         }
     }
-    private void SetMushroomState()
+    private void SetAgentState()
     {
-        var movementDirection = _movementDirection.normalized;
-        var currentState = GetGoblinState();
+        var currentState = GetAgentState();
         var isAttack = IsAttack();
         var IsDead = GetIsDead();
 
         var newState = currentState switch
         {
-            _ when movementDirection != Vector3.zero && !isAttack && IsDead => MushroomState.Dead,
-            _ when movementDirection != Vector3.zero && !isAttack && !IsDead => MushroomState.Move,
-            _ when movementDirection != Vector3.zero && isAttack && !IsDead => MushroomState.Attack,
-            _ => MushroomState.Move
+            _ when  !isAttack && IsDead => AgentState.Dead,
+            _ when  !isAttack && !IsDead => AgentState.Move,
+            _ when  isAttack && !IsDead => AgentState.Attack,
+            _ => AgentState.Move
         };
 
         if(newState == currentState) { return; }
         else ChangeState(newState);
     }
-    public enum MushroomState
+    public enum AgentState
     {
         Move, Attack, Dead
     }
 
-    private void ChangeState(MushroomState newState)
+    private void ChangeState(AgentState newState)
     {
         if(_currentState == newState) { return; }
 
         _currentState = newState;
     }
 
-    public MushroomState GetGoblinState()
+    public AgentState GetAgentState()
     {
         return _currentState;
     }
-    private void SetMushroomAnim()
+    private void SetAgentAnim()
     {
-        var currentState = GetGoblinState();
+        var currentState = GetAgentState();
 
         switch(currentState)
         {
-            case MushroomState.Move:
-            _mushroomAnimator.SetBool("IsMove", true);
-            _mushroomAnimator.SetBool("IsDead", false);
-            _mushroomAnimator.SetBool("IsAttack", false);
+            case AgentState.Move:
+            _agentAnimator.SetBool("IsMove", true);
+            _agentAnimator.SetBool("IsDead", false);
+            _agentAnimator.SetBool("IsAttack", false);
             break;
-            case MushroomState.Dead:
-            _mushroomAnimator.SetBool("IsMove", false);
-            _mushroomAnimator.SetBool("IsDead", true);
-            _mushroomAnimator.SetBool("IsAttack", false);
+            case AgentState.Dead:
+            _agentAnimator.SetBool("IsMove", false);
+            _agentAnimator.SetBool("IsDead", true);
+            _agentAnimator.SetBool("IsAttack", false);
             break;
-            case MushroomState.Attack:
-            _mushroomAnimator.SetBool("IsMove", false);
-            _mushroomAnimator.SetBool("IsDead", false);
-            _mushroomAnimator.SetBool("IsAttack", true);
+            case AgentState.Attack:
+            _agentAnimator.SetBool("IsMove", false);
+            _agentAnimator.SetBool("IsDead", false);
+            _agentAnimator.SetBool("IsAttack", true);
             break;
         }
     }
     private void StateWorking()
     {
-        var currentState = GetGoblinState();
+        var currentState = GetAgentState();
 
         switch (currentState)
         {
-            case MushroomState.Move:
-            Debug.Log("MUSHROOM MOVE");
+            case AgentState.Move:
+            Debug.Log("Agent MOVE");
             break;
-            case MushroomState.Attack:
-            Debug.Log("MUSHROOM ATTACK");
+            case AgentState.Attack:
+            Debug.Log("Agent ATTACK");
             break;
-            case MushroomState.Dead:
-            Debug.Log("MUSHROOM DEAD");
+            case AgentState.Dead:
+            Debug.Log("Agent DEAD");
             break;
         }
     }
 
     public void Damage(float damageAmount)
     {
-        _currentMushroomHeal -= damageAmount;
+        _currentAgentHeal -= damageAmount;
 
-        if(_currentMushroomHeal <= 0f)
+        if(_currentAgentHeal <= 0f)
         {
             _isDead = true;
-        }
-        if(_isDead)
-        {
-            Destroy(gameObject, _destroyCooldown);
-            HealManager.Instance.Heal(5f);
+            if(_isDead)
+            {   
+                Destroy(gameObject, _destroyCooldown);
+            }
         }
     }
 
     private bool GetIsDead()
     {
         return _isDead;
-    }
+    }   
 }
