@@ -193,6 +193,7 @@ public class MushroomController : MonoBehaviour, IDamagables
         if(_isDead)
         {
             Destroy(gameObject, _destroyCooldown);
+            HealManager.Instance.Heal(5f);
         }
     }
 

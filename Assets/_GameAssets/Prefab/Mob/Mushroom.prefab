@@ -50,7 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _mushroomAnimator: {fileID: 1175689442687689149}
   _sprite: {fileID: 4635033624461707328}
-  _mushroomSpeed: 15
+  _mushroomSpeed: 10
   _damageCoolDown: 0.7
   _maxHealMushroom: 100
   _destroyCooldown: 0.9

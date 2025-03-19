@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class GoblinController : MonoBehaviour, IDamagables
 {
@@ -16,12 +17,16 @@ public class GoblinController : MonoBehaviour, IDamagables
 
 
     private Rigidbody2D _goblinRB;
+    private NavMeshAgent _agent;
     private GoblinState _currentState = GoblinState.Move;
-    private Vector3  _movementDirection;
     private float _currentDamageCooldown, _currentGoblinHeal;
     private bool _isDead;
     private void Awake() 
     {
+        _agent = GetComponent<NavMeshAgent>();
+        _agent.updateRotation = false;
+        _agent.updateUpAxis = false;
+
        _goblinRB = GetComponent<Rigidbody2D>();
        ChangeState(GoblinState.Move);
        _playerTransform = GameObject.Find("Player").GetComponent<Transform>();
@@ -49,10 +54,7 @@ public class GoblinController : MonoBehaviour, IDamagables
 
     private void SetGoblinDirection()
     {
-
-        _movementDirection =  _playerTransform.position - transform.position;
-
-        _goblinRB.linearVelocity = _movementDirection * _goblinSpeed * Time.deltaTime;
+            _agent.SetDestination(_playerTransform.position);
     } 
 
     private void SetGoblinFlip()
@@ -72,13 +74,13 @@ public class GoblinController : MonoBehaviour, IDamagables
 
         var newSpeed = currentState switch
         {
-            _ when currentState == GoblinState.Move => 15f,
+            _ when currentState == GoblinState.Move => _goblinSpeed,
             _ when currentState == GoblinState.Attack => 0f,
             _ when currentState == GoblinState.Dead => 0f,
             _ => _goblinSpeed
         };
 
-        _goblinSpeed = newSpeed;
+        _agent.speed = newSpeed;
     }
 
     private bool IsAttack()
@@ -109,16 +111,15 @@ public class GoblinController : MonoBehaviour, IDamagables
     }
     private void SetGoblinState()
     {
-        var movementDirection = _movementDirection.normalized;
         var currentState = GetGoblinState();
         var isAttack = IsAttack();
         var IsDead = GetIsDead();
 
         var newState = currentState switch
         {
-            _ when movementDirection != Vector3.zero && !isAttack && IsDead => GoblinState.Dead,
-            _ when movementDirection != Vector3.zero && !isAttack && !IsDead => GoblinState.Move,
-            _ when movementDirection != Vector3.zero && isAttack && !IsDead => GoblinState.Attack,
+            _ when  !isAttack && IsDead => GoblinState.Dead,
+            _ when  !isAttack && !IsDead => GoblinState.Move,
+            _ when  isAttack && !IsDead => GoblinState.Attack,
             _ => GoblinState.Move
         };
 
@@ -192,7 +193,9 @@ public class GoblinController : MonoBehaviour, IDamagables
         }
         if(_isDead)
         {
+            
             Destroy(gameObject, _destroyCooldown);
+            HealManager.Instance.Heal(5f);
         }
     }
 

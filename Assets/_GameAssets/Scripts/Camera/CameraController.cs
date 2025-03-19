@@ -10,7 +10,6 @@ public class CameraController : MonoBehaviour
     }
     private void FixedUpdate() 
     {
-         _targetTransform.position = _cameraTransfrom; 
-           
+         _targetTransform.position = _cameraTransfrom;         
     }
 }

@@ -48,6 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _bulletDamage: 10
+  _healAmaount: 5
 --- !u!212 &15631697467259892
 SpriteRenderer:
   m_ObjectHideFlags: 0

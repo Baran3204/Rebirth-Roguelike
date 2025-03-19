@@ -50,7 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _skeletonAnimator: {fileID: 544597544181868197}
   _sprite: {fileID: 56652783519117955}
-  _skeletonSpeed: 10
+  _skeletonSpeed: 20
   _damageCoolDown: 1
   _maxHealSkeleton: 100
   _destroyCooldown: 0.9

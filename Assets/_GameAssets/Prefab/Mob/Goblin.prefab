@@ -50,7 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _goblinAnimator: {fileID: 4190410291449480519}
   _sprite: {fileID: 3305547035642014900}
-  _goblinSpeed: 15
+  _goblinSpeed: 30
   _damageCoolDown: 0.5
   _maxHealGoblin: 100
   _destroyCooldown: 0.8
