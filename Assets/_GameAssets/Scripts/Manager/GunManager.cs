@@ -17,8 +17,13 @@ public class GunManager : MonoBehaviour
 
     private void Update() 
     {
-        SetInputs();
-        CreateBullet();   
+        var currentState = GameManager.Instance.GetGameState();
+
+         if(currentState != GameManager.GameState.Pause && currentState != GameManager.GameState.GameOver)
+         {
+             SetInputs();
+             CreateBullet();
+         }  
     }
 
     private void CreateBullet()

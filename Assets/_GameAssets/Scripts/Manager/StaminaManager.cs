@@ -31,9 +31,14 @@ public class StaminaManager : MonoBehaviour
 
    private void Update() 
     {
-        Staminaİncrease();
-        SetStaminaDeinscrease(); 
-        SetStaminaSlider();   
+        var currentState = GameManager.Instance.GetGameState();
+
+        if(currentState != GameManager.GameState.Pause && currentState != GameManager.GameState.GameOver)
+        {
+            Staminaİncrease();
+            SetStaminaDeinscrease(); 
+            SetStaminaSlider();   
+        }      
     }
 
 

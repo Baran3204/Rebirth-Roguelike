@@ -27,21 +27,33 @@ public class PlayerController : MonoBehaviour
     {
         _playerRigidbody = GetComponent<Rigidbody2D>();
         _playerCollider = GetComponent<BoxCollider2D>();
+        GameManager.Instance.ChangeState(GameManager.GameState.Play);
     }
     private void Update() 
     {
-        PlayerCanFlip();
-        Setİnputs(); 
-        SetPlayerState();
-        SetShifting();
-        SetPlayerSpeed();
-        SetPlayerTrigger();
+        var currentState = GameManager.Instance.GetGameState();
+
+          if(currentState != GameManager.GameState.Pause && currentState != GameManager.GameState.GameOver)
+          {
+            PlayerCanFlip();
+            Setİnputs();
+            SetPlayerState();  
+            SetShifting();
+            SetPlayerSpeed();
+            SetPlayerTrigger();
+          }
+             
     }
 
     private void FixedUpdate() 
     {
-        StateWorking(); 
-        SetPlayerMovement();    
+        var currentState = GameManager.Instance.GetGameState();
+
+        if(currentState != GameManager.GameState.Pause && currentState != GameManager.GameState.GameOver)
+        {
+           SetPlayerMovement(); 
+        }
+           
     }
     private void SetPlayerMovement()
     {
@@ -136,15 +148,14 @@ public class PlayerController : MonoBehaviour
         
     } 
 
-   #region Helper Funcionts
-
-    public bool GetCanShift()
+    private void OnTriggerEnter2D(Collider2D other) 
     {
-        return _canShift;
-    }
-    public bool GetCanFlip()
-    {
-        return _canFlip;
+        if(other.gameObject.CompareTag("Medkit")) 
+        {
+            other.gameObject.TryGetComponent<IHealables>(out IHealables component);
+            component.Heal();
+            Destroy(other.gameObject);
+        }   
     }
 
     private void PlayerCanFlip()
@@ -159,6 +170,18 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+   #region Helper Funcionts
+
+    public bool GetCanShift()
+    {
+        return _canShift;
+    }
+    public bool GetCanFlip()
+    {
+        return _canFlip;
+    }
+
+
     private void StateWorking()
     {
         var currentState = PlayerStateController.Instance.GetPlayerState();
@@ -167,14 +190,6 @@ public class PlayerController : MonoBehaviour
         else if(currentState == PlayerState.Shift) { Debug.Log("SHİFT"); }
     }
 
-    private void OnTriggerEnter2D(Collider2D other) 
-    {
-        if(other.gameObject.CompareTag("Medkit")) 
-        {
-            other.gameObject.TryGetComponent<IHealables>(out IHealables component);
-            component.Heal();
-            Destroy(other.gameObject);
-        }   
-    }
+    
     #endregion
 }

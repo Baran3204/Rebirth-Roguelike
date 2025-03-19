@@ -36,18 +36,29 @@ public class GoblinController : MonoBehaviour, IDamagables
 
     private void Update() 
     {
-        SetAgentStopping();
-        SetAgentFlip();
-        SetAgentState();
-        SetAgentAnim();
-        SetAgentSpeed();
-        SetAgentDamage();
+        var currentState = GameManager.Instance.GetGameState();
+
+        if(currentState != GameManager.GameState.Pause && currentState != GameManager.GameState.GameOver)
+        {
+            SetAgentStopping();
+            SetAgentFlip();
+            SetAgentState();
+            SetAgentAnim();
+            SetAgentSpeed();
+            SetAgentDamage();
+        }
+        PauseOrGameOver();
     }
 
     private void FixedUpdate() 
     {
-        SetAgentDirection();  
-        StateWorking();  
+         var currentState = GameManager.Instance.GetGameState();
+
+        if(currentState != GameManager.GameState.Pause && currentState != GameManager.GameState.GameOver)
+        {
+             SetAgentDirection(); 
+        }
+        
     }
 
 
@@ -69,6 +80,7 @@ public class GoblinController : MonoBehaviour, IDamagables
     }
     private void SetAgentSpeed()
     {
+        
         var currentState = GetAgentState();
 
         var newSpeed = currentState switch
@@ -161,6 +173,7 @@ public class GoblinController : MonoBehaviour, IDamagables
     }
     private void SetAgentAnim()
     {
+        _agentAnimator.enabled = true;
         var currentState = GetAgentState();
 
         switch(currentState)
@@ -199,7 +212,17 @@ public class GoblinController : MonoBehaviour, IDamagables
             break;
         }
     }
+    private void PauseOrGameOver()
+    {
+         var currentState = GameManager.Instance.GetGameState();
 
+        if(currentState == GameManager.GameState.Pause || currentState == GameManager.GameState.GameOver)
+        {
+            _agent.speed = 0f;
+            _agent.isStopped = true;
+            _agentAnimator.enabled = false;
+        }
+    }
     public void Damage(float damageAmount)
     {
         _currentAgentHeal -= damageAmount;

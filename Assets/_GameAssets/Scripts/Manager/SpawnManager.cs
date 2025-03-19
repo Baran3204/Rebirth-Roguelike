@@ -20,13 +20,19 @@ public class SpawnManager : MonoBehaviour
 
    private void Update() 
    {
-        currentCooldown -= Time.deltaTime;
+     var currentState = GameManager.Instance.GetGameState();
 
-        if(currentCooldown <= 0f)
-        {
-            SpawnEnemy();
-            currentCooldown = _enemySpawnCooldown;
-        } 
+     if(currentState != GameManager.GameState.Pause && currentState != GameManager.GameState.GameOver)
+      {
+          currentCooldown -= Time.deltaTime;
+
+         if(currentCooldown <= 0f)
+         {
+             SpawnEnemy();
+             currentCooldown = _enemySpawnCooldown;
+         } 
+      }
+        
    }
 
    private void SpawnEnemy()

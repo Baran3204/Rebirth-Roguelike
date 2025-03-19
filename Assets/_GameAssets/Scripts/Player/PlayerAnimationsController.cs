@@ -18,7 +18,9 @@ public class PlayerAnimationsController : MonoBehaviour
     
     private void Update() 
     {
-        SetPlayerFlip();
+        var currentState = GameManager.Instance.GetGameState();
+
+        if(currentState != GameManager.GameState.Pause && currentState != GameManager.GameState.GameOver) SetPlayerFlip();     
     }
 
     private void FixedUpdate() 
