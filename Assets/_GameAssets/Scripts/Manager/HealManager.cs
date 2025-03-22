@@ -49,6 +49,7 @@ public class HealManager : MonoBehaviour
         if(_currentHeal >= 0f)
         {
             _damageParticle.Play();
+            
             _currentHeal -= damageAmount;
 
             if(_currentHeal <= 0f)

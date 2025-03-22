@@ -5,17 +5,20 @@ public class SpawnManager : MonoBehaviour
 {
     [Header("References")]
    [SerializeField] private GameObject[] _enemyList;
+   [SerializeField] private GameObject _medKit;
    [SerializeField] private Transform _spawnArea;
 
    [Header("Settings")]
-   [SerializeField] private float _spawnRadius;
+   [SerializeField] private float _enemySpawnRadius;
+   [SerializeField] private float _medkitSpawnRadius;
    [SerializeField] private float _enemySpawnCooldown;
+   [SerializeField] private float _medkitSpawnCooldown;
 
-   private float currentCooldown;
+   private float currentEnemyCooldown, currentMedkitCooldown;
 
    private void Awake() 
    {
-        currentCooldown = _enemySpawnCooldown; 
+        currentEnemyCooldown = _enemySpawnCooldown; 
    }
 
    private void Update() 
@@ -24,13 +27,19 @@ public class SpawnManager : MonoBehaviour
 
      if(currentState != GameManager.GameState.Pause && currentState != GameManager.GameState.GameOver)
       {
-          currentCooldown -= Time.deltaTime;
+          currentEnemyCooldown -= Time.deltaTime;
+          currentMedkitCooldown -= Time.deltaTime;
 
-         if(currentCooldown <= 0f)
+         if(currentEnemyCooldown <= 0f)
          {
-             SpawnEnemy();
-             currentCooldown = _enemySpawnCooldown;
+            SpawnEnemy();
+            currentEnemyCooldown = _enemySpawnCooldown;
          } 
+         if(currentMedkitCooldown <= 0f)
+         {
+            SpawnMedkit();
+            currentMedkitCooldown = _medkitSpawnCooldown;
+         }
       }
         
    }
@@ -40,11 +49,27 @@ public class SpawnManager : MonoBehaviour
         var currentEnemy = _enemyList[Random.Range(0, _enemyList.Length)]; 
         var currentSpawn = new Vector3
         (
-           _spawnArea.transform.position.x + Random.Range(-_spawnRadius, _spawnRadius),    
-           _spawnArea.transform.position.y + Random.Range(-_spawnRadius, _spawnRadius)    
-
+           _spawnArea.transform.position.x + Random.Range(-_enemySpawnRadius, _enemySpawnRadius),    
+           _spawnArea.transform.position.y + Random.Range(-_enemySpawnRadius, _enemySpawnRadius)
         );
         Instantiate(currentEnemy, currentSpawn, Quaternion.identity);
-
    }
+
+   private void SpawnMedkit()
+   {
+      var currentSpawn = new Vector3
+      (
+         _spawnArea.transform.position.x + Random.Range(-_medkitSpawnRadius, _medkitSpawnRadius),    
+         _spawnArea.transform.position.y + Random.Range(-_medkitSpawnRadius, _medkitSpawnRadius)    
+      );
+
+      float lucky = Random.Range(1, 101);
+      
+      if(lucky <= 25)
+      {  
+         GameObject medkit = Instantiate(_medKit, currentSpawn, Quaternion.identity);
+         Destroy(medkit, 5f);
+      }
+       
+   }  
 }

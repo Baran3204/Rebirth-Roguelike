@@ -21,6 +21,8 @@ public class GoblinController : MonoBehaviour, IDamagables
     private NavMeshAgent _agent;
     private AgentState _currentState = AgentState.Move;
     private float _currentDamageCooldown, _currentAgentHeal;
+    private float border = 0f;
+
     private bool _isDead;
     private void Awake() 
     {
@@ -230,9 +232,15 @@ public class GoblinController : MonoBehaviour, IDamagables
         if(_currentAgentHeal <= 0f)
         {
             _isDead = true;
+
             if(_isDead)
             {   
-                Destroy(gameObject, _destroyCooldown);
+                if(border == 0f)
+                {
+                   Destroy(gameObject, _destroyCooldown);
+                   XpManager.Instance.Xpİncrease();
+                   border++;
+                }          
             }
         }
        

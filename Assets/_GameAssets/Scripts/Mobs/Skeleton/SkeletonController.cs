@@ -15,10 +15,12 @@ public class SkeletonController : MonoBehaviour, IDamagables
     [SerializeField] private float _destroyCooldown;
     [SerializeField] private float _damageAmount;
 
+
     private NavMeshAgent _agent;
     private AgentState _currentState = AgentState.Move;
     private float _currentDamageCooldown, _currentAgentHeal;
     private bool _isDead;
+    private float border = 0f;
     private void Awake() 
     {
         _agent = GetComponent<NavMeshAgent>();
@@ -227,7 +229,12 @@ public class SkeletonController : MonoBehaviour, IDamagables
             _isDead = true;
              if(_isDead)
             {   
-                Destroy(gameObject, _destroyCooldown);
+                if(border == 0f)
+                {
+                   Destroy(gameObject, _destroyCooldown);
+                   XpManager.Instance.Xpİncrease();
+                   border++;
+                }
             }
         }
     }
