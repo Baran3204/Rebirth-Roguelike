@@ -141,7 +141,7 @@ public class SkeletonController : MonoBehaviour, IDamagables
 
         var newState = currentState switch
         {
-            _ when  !isAttack && IsDead => AgentState.Dead,
+            _ when  IsDead => AgentState.Dead,
             _ when  !isAttack && !IsDead => AgentState.Move,
             _ when  isAttack && !IsDead => AgentState.Attack,
             _ => AgentState.Move
