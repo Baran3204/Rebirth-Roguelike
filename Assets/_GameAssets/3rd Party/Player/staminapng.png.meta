@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: d1662860ba466254382c71936e75e811
+guid: 8ba8445fc1d06684c8b04f54359bec07
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1041739025294523481
-    second: "stam\u0131na_0"
+      213: -1138634991203988285
+    second: staminapng_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "stam\u0131na_0"
+      name: staminapng_0
       rect:
         serializedVersion: 2
         x: 0
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 95c7757cf10057e00800000000000000
-      internalID: 1041739025294523481
+      spriteID: 3ccc47c1281c230f0800000000000000
+      internalID: -1138634991203988285
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "stam\u0131na_0": 1041739025294523481
+      staminapng_0: -1138634991203988285
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

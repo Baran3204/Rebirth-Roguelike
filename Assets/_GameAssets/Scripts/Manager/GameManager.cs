@@ -19,21 +19,11 @@ public class GameManager : MonoBehaviour
         return _currentGameState;
     }
 
-  public bool RePlay;
    private void Awake() 
    {     
         Instance = this;
    }
 
-   private void Update() 
-   {
-    if(RePlay)
-    {
-      ChangeState(GameState.Play);
-    }
-    else ChangeState(GameState.Pause);
-     Debug.Log("ŞU ANKİ GAMESTATE: " + _currentGameState);
-   }
-
+   
 }
 

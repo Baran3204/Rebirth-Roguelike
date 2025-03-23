@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class XpManager : MonoBehaviour
 {
    public static XpManager Instance;
+   
    [Header("References")]
    [SerializeField] private Slider _xpSlider;
 
@@ -35,7 +36,7 @@ public class XpManager : MonoBehaviour
 
         if(_currentXp >= _xpBorder)
         {
-            //Upgrade Menu + ResetXp
+            UpgradeUI.Instance.OpenUpgradeUI();
             ResetXp(_xpDecreaseAmount);
             _xpDecreaseAmount += _xpDecreasePlus;
         }

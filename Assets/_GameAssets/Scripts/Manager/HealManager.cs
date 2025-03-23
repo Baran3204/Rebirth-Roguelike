@@ -60,7 +60,10 @@ public class HealManager : MonoBehaviour
        
     }
 
-    
+    public void UpdateMaxHeal(float amount)
+    {
+        _maxHeal += amount;
+    }
     public float GetCurrentHeal()
     {
         return _currentHeal;
