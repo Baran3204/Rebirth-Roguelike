@@ -426,7 +426,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _healSlider: {fileID: 1006881034}
   _damageParticle: {fileID: 1163106521}
-  _maxHeal: 100
+  _maxHeal: 50
 --- !u!4 &98892374
 Transform:
   m_ObjectHideFlags: 0
@@ -619,7 +619,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _xpSlider: {fileID: 2004145544}
-  _xpBorder: 35
+  _xpBorder: 20
   _currentXp: 0
   _xpDecreaseAmount: 10
   _xpDecreasePlus: 5
@@ -3186,7 +3186,7 @@ MonoBehaviour:
   _spawnArea: {fileID: 1998674420}
   _enemySpawnRadius: 30
   _medkitSpawnRadius: 15
-  _enemySpawnCooldown: 2
+  _enemySpawnCooldown: 1
   _medkitSpawnCooldown: 2
 --- !u!4 &1089293677
 Transform:
@@ -3257,13 +3257,13 @@ MonoBehaviour:
   _staminaButton: {fileID: 1438521329}
   _healButton: {fileID: 1709716318}
   _damageButton: {fileID: 1345803342}
-  "_stamina\u0130ncrease": 15
-  _staminaPlus: 5
+  "_stamina\u0130ncrease": 10
+  _staminaPlus: 2
   _staminaText: {fileID: 607970954}
   "_heal\u0130ncrease": 10
-  _healPlus: 5
+  _healPlus: 2
   _healText: {fileID: 1139825842}
-  "_damage\u0130ncrease": 5
+  "_damage\u0130ncrease": 2
   _damagePlus: 2
   _damageText: {fileID: 1059429931}
   _coolDown: 0.6
@@ -10109,7 +10109,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerController: {fileID: 1998674416}
   _staminaSlider: {fileID: 32840660}
-  _maxStamina: 100
+  _maxStamina: 50
   _increaseCooldown: 0.5
   "_idleStamina\u0130ncrease": 15
   "_movementStamina\u0130ncrease": 10
@@ -10990,6 +10990,63 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2108613445}
   m_CullTransparentMesh: 1
+--- !u!1001 &2123963765
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2057570171845971828, guid: 244803ce3d416544fa7b404ff20d69fe, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2057570171845971828, guid: 244803ce3d416544fa7b404ff20d69fe, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2057570171845971828, guid: 244803ce3d416544fa7b404ff20d69fe, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -8.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2057570171845971828, guid: 244803ce3d416544fa7b404ff20d69fe, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2057570171845971828, guid: 244803ce3d416544fa7b404ff20d69fe, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2057570171845971828, guid: 244803ce3d416544fa7b404ff20d69fe, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2057570171845971828, guid: 244803ce3d416544fa7b404ff20d69fe, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2057570171845971828, guid: 244803ce3d416544fa7b404ff20d69fe, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2057570171845971828, guid: 244803ce3d416544fa7b404ff20d69fe, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2057570171845971828, guid: 244803ce3d416544fa7b404ff20d69fe, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7908641212361318735, guid: 244803ce3d416544fa7b404ff20d69fe, type: 3}
+      propertyPath: m_Name
+      value: AudioManager
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 244803ce3d416544fa7b404ff20d69fe, type: 3}
 --- !u!1 &2145638811
 GameObject:
   m_ObjectHideFlags: 0
@@ -11139,3 +11196,4 @@ SceneRoots:
   - {fileID: 1899636713}
   - {fileID: 790596923}
   - {fileID: 1998674420}
+  - {fileID: 2123963765}

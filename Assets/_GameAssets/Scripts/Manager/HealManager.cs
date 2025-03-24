@@ -36,7 +36,7 @@ public class HealManager : MonoBehaviour
     {
          var currentState = GameManager.Instance.GetGameState();
 
-        if(currentState != GameManager.GameState.Pause && currentState != GameManager.GameState.GameOver) SetSlider();
+        SetSlider();
     }
 
     private void SetSlider()
@@ -49,7 +49,7 @@ public class HealManager : MonoBehaviour
         if(_currentHeal >= 0f)
         {
             _damageParticle.Play();
-            
+            AudioManager.Instance.Play(SoundType.HitEnemy);
             _currentHeal -= damageAmount;
 
             if(_currentHeal <= 0f)

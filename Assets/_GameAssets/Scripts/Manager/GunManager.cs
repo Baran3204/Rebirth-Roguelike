@@ -40,6 +40,7 @@ public class GunManager : MonoBehaviour
         if(Input.GetMouseButtonDown(0))
         {
             GameObject bullet = Instantiate(_bullet, _gunTransform.position, Quaternion.identity);
+            AudioManager.Instance.Play(SoundType.HitPlayer);
             _usedBullet++;
 
             Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();

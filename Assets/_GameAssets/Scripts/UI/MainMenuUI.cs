@@ -17,11 +17,13 @@ public class MainMenuUI : MonoBehaviour
 
     private void QuitButtonClicked()
     {
+        AudioManager.Instance.Play(SoundType.ButtonClick);
         Application.Quit();
     }
 
     private void StartButtonClicked()
-    {        
+    {  
+        AudioManager.Instance.Play(SoundType.ButtonClick);      
         SceneManager.LoadScene("GameScene");       
     }
 }

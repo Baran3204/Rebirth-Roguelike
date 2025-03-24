@@ -30,20 +30,20 @@ public class UpgradeUI : MonoBehaviour
    [SerializeField] private float _damagePlus;
    [SerializeField] private TMP_Text _damageText;
 
-   private Bullet _bullet;
 
    [Header("Global Settings")]
    [SerializeField] private float _coolDown;
 
    [SerializeField] private int _currentUpgrade;
    private bool _isBlock;
+   private float _currenrCooldown;
    private void Awake() 
    {
         Instance = this;
         _staminaButton.onClick.AddListener(StaminaButtonClicked);
         _healButton.onClick.AddListener(HealButtonClicked);
         _damageButton.onClick.AddListener(DamageButtonClicked);
-     
+          _currenrCooldown = _coolDown;
 
         UpdateTexts();
    }
@@ -51,12 +51,12 @@ public class UpgradeUI : MonoBehaviour
     {
           if(_isBlock)
           {
-               _coolDown -= Time.deltaTime;
-               if(_coolDown <= 0f)
+               _currenrCooldown -= Time.deltaTime;
+               if(_currenrCooldown <= 0f)
                {
                     _block.SetActive(false);
                     _isBlock = false;
-                    _coolDown += _coolDown;
+                    _currenrCooldown += _coolDown;
                }
           }   
     }
@@ -94,7 +94,8 @@ public class UpgradeUI : MonoBehaviour
     }
 
    public void OpenUpgradeUI()
-   {
+   {      
+       AudioManager.Instance.Play(SoundType.UpgradeOpen);
         _upgradeUI.DOScale(1f, 0.3f).SetEase(Ease.OutBack);
         _block.SetActive(true);
         _isBlock = true;
@@ -104,6 +105,7 @@ public class UpgradeUI : MonoBehaviour
 
    public void CloseUpgradeUI()
    {
+        AudioManager.Instance.Play(SoundType.UpgradeSelect);
         _upgradeUI.DOScale(0f, 0.3f).SetEase(Ease.InBack);
         GameManager.Instance.ChangeState(GameManager.GameState.Play);
    }

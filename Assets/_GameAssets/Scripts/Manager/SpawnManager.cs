@@ -68,7 +68,9 @@ public class SpawnManager : MonoBehaviour
            _spawnArea.transform.position.y + Random.Range(-_enemySpawnRadius, _enemySpawnRadius)
         );
         
-        Instantiate(currentEnemy, currentSpawn, Quaternion.identity);
+       GameObject enemY = Instantiate(currentEnemy, currentSpawn, Quaternion.identity);
+
+       Destroy(enemY, 12f);
    }
 
    private void SpawnMedkit()

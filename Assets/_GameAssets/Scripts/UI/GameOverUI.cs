@@ -34,11 +34,13 @@ public class GameOverUI : MonoBehaviour
 
     private void MainMenuButtonClicked()
     {
+        AudioManager.Instance.Play(SoundType.ButtonClick);
         SceneManager.LoadScene("MainMenuScene");
     }
 
     private void TryAgainButtonClicked()
     {
+        AudioManager.Instance.Play(SoundType.ButtonClick);
         SceneManager.LoadScene("GameScene");
     }
 
@@ -59,6 +61,7 @@ public class GameOverUI : MonoBehaviour
 
     public void OpenGameOverUI()
     {
+        AudioManager.Instance.Play(SoundType.GameOverOpen);
         this.transform.DOScale(1f, 0.5f).SetEase(Ease.InBack);
     }
 }

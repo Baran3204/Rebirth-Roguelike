@@ -155,6 +155,7 @@ public class PlayerController : MonoBehaviour
         {
             other.gameObject.TryGetComponent<IHealables>(out IHealables component);
             component.Heal();
+            AudioManager.Instance.Play(SoundType.Collect);
             _usedMedkit++;
             Destroy(other.gameObject);
         }   
