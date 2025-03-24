@@ -235,6 +235,7 @@ public class MushroomController : MonoBehaviour, IDamagables
                 {
                    Destroy(gameObject, _destroyCooldown);
                    XpManager.Instance.Xpİncrease();
+                   SpawnManager.Instance.UpdateKilledEnemies();
                    border++;
                 }                   
             }

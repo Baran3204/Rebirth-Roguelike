@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
+   public static SpawnManager Instance;
+
     [Header("References")]
    [SerializeField] private GameObject[] _enemyList;
    [SerializeField] private GameObject _medKit;
@@ -14,10 +16,11 @@ public class SpawnManager : MonoBehaviour
    [SerializeField] private float _enemySpawnCooldown;
    [SerializeField] private float _medkitSpawnCooldown;
 
-   private float currentEnemyCooldown, currentMedkitCooldown;
+   private float currentEnemyCooldown, currentMedkitCooldown, killedEnemies;
 
    private void Awake() 
    {
+      Instance = this;
         currentEnemyCooldown = _enemySpawnCooldown; 
    }
 
@@ -46,12 +49,25 @@ public class SpawnManager : MonoBehaviour
 
    private void SpawnEnemy()
    {
-        var currentEnemy = _enemyList[Random.Range(0, _enemyList.Length)]; 
+      GameObject currentEnemy;
+      if(UpgradeUI.Instance.GetCurrentUpgrade() >= 0 && UpgradeUI.Instance.GetCurrentUpgrade() <= 2)
+      {
+           currentEnemy = _enemyList[Random.Range(0, _enemyList.Length - 2)]; 
+      }
+      else if(UpgradeUI.Instance.GetCurrentUpgrade() > 2 && UpgradeUI.Instance.GetCurrentUpgrade() <= 3)
+      {
+            currentEnemy = _enemyList[Random.Range(0, _enemyList.Length - 1)];
+      }
+      else
+      {
+             currentEnemy = _enemyList[Random.Range(0, _enemyList.Length)];
+      }
         var currentSpawn = new Vector3
         (
            _spawnArea.transform.position.x + Random.Range(-_enemySpawnRadius, _enemySpawnRadius),    
            _spawnArea.transform.position.y + Random.Range(-_enemySpawnRadius, _enemySpawnRadius)
         );
+        
         Instantiate(currentEnemy, currentSpawn, Quaternion.identity);
    }
 
@@ -72,4 +88,14 @@ public class SpawnManager : MonoBehaviour
       }
        
    }  
+
+   public void UpdateKilledEnemies()
+   {
+      killedEnemies++;
+   }
+
+   public float GetKilledEnemies()
+   {
+      return killedEnemies;
+   }
 }

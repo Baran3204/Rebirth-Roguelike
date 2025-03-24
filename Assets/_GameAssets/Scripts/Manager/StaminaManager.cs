@@ -106,4 +106,9 @@ public class StaminaManager : MonoBehaviour
    {
      _maxStamina += amount;
    }
+
+   public float GetMaxStamina()
+   {
+    return _maxStamina;
+   }
 }

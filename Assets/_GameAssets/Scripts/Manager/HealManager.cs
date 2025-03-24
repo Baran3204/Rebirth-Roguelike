@@ -54,6 +54,7 @@ public class HealManager : MonoBehaviour
 
             if(_currentHeal <= 0f)
             {
+                GameOverUI.Instance.OpenGameOverUI();
                 GameManager.Instance.ChangeState(GameManager.GameState.GameOver);
             }
         }
@@ -67,5 +68,10 @@ public class HealManager : MonoBehaviour
     public float GetCurrentHeal()
     {
         return _currentHeal;
+    }
+
+    public float GetMaxHeal()
+    {
+        return _maxHeal;
     }
 }

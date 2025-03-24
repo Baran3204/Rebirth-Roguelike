@@ -30,19 +30,20 @@ public class UpgradeUI : MonoBehaviour
    [SerializeField] private float _damagePlus;
    [SerializeField] private TMP_Text _damageText;
 
+   private Bullet _bullet;
 
    [Header("Global Settings")]
    [SerializeField] private float _coolDown;
 
    [SerializeField] private int _currentUpgrade;
    private bool _isBlock;
-
    private void Awake() 
    {
         Instance = this;
         _staminaButton.onClick.AddListener(StaminaButtonClicked);
         _healButton.onClick.AddListener(HealButtonClicked);
         _damageButton.onClick.AddListener(DamageButtonClicked);
+     
 
         UpdateTexts();
    }
@@ -55,6 +56,7 @@ public class UpgradeUI : MonoBehaviour
                {
                     _block.SetActive(false);
                     _isBlock = false;
+                    _coolDown += _coolDown;
                }
           }   
     }
@@ -83,7 +85,7 @@ public class UpgradeUI : MonoBehaviour
     private void DamageButtonClicked()
     {
        
-       Bullet.Instance.SetBulletDamage(_damageİncrease);
+       GunManager.Instance.UpdateBulletDamge(_damageİncrease);
        _damageİncrease += _damagePlus;
        
        CloseUpgradeUI();
@@ -113,8 +115,8 @@ public class UpgradeUI : MonoBehaviour
      }
    private void UpdateTexts()
    {
-     _staminaText.text = "STAMİNA LİMİT +" + _staminaİncrease.ToString() + "!";
-     _healText.text = "HEAL LİMİT +" + _healİncrease.ToString() + "!";
-     _damageText.text = "DAMAGE LİMİT +" + _damageİncrease.ToString() + "!";
+     _staminaText.text = "STAMINA LIMIT +" + _staminaİncrease.ToString() + "!";
+     _healText.text = "HEAL LIMIT +" + _healİncrease.ToString() + "!";
+     _damageText.text = "DAMAGE LIMIT +" + _damageİncrease.ToString() + "!";
    }
 }

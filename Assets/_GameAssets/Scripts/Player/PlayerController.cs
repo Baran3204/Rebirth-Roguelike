@@ -21,12 +21,13 @@ public class PlayerController : MonoBehaviour
     private Vector2 _movementDirection;
     private Rigidbody2D _playerRigidbody;
     private BoxCollider2D _playerCollider;
-    private float _horizontal, _vertical;
+    private float _horizontal, _vertical, _usedMedkit;
     private bool _canFlip;
     private void Awake() 
     {
         _playerRigidbody = GetComponent<Rigidbody2D>();
         _playerCollider = GetComponent<BoxCollider2D>();
+        _usedMedkit = 0f;
         GameManager.Instance.ChangeState(GameManager.GameState.Play);
     }
     private void Update() 
@@ -154,6 +155,7 @@ public class PlayerController : MonoBehaviour
         {
             other.gameObject.TryGetComponent<IHealables>(out IHealables component);
             component.Heal();
+            _usedMedkit++;
             Destroy(other.gameObject);
         }   
     }
@@ -189,7 +191,10 @@ public class PlayerController : MonoBehaviour
         else if(currentState == PlayerState.Walk) { Debug.Log("WALK"); }
         else if(currentState == PlayerState.Shift) { Debug.Log("SHİFT"); }
     }
-
+    public float GetUsedMedkit()
+    {
+        return _usedMedkit;
+    }
     
     #endregion
 }

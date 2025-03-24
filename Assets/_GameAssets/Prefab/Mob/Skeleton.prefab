@@ -53,9 +53,9 @@ MonoBehaviour:
   _sprite: {fileID: 56652783519117955}
   _agentSpeed: 15
   _damageCoolDown: 1
-  _maxHealAgent: 75
+  _maxHealAgent: 65
   _destroyCooldown: 0.9
-  _damageAmount: 5
+  _damageAmount: 20
 --- !u!212 &56652783519117955
 SpriteRenderer:
   m_ObjectHideFlags: 0

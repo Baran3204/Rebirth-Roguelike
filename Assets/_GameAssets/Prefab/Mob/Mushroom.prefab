@@ -55,7 +55,7 @@ MonoBehaviour:
   _damageCoolDown: 0.7
   _maxHealAgent: 100
   _destroyCooldown: 0.9
-  _damageAmount: 6
+  _damageAmount: 25
 --- !u!212 &4635033624461707328
 SpriteRenderer:
   m_ObjectHideFlags: 0
